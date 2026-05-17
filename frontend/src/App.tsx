@@ -679,9 +679,11 @@ function App() {
                             <div className="text-[10px] font-black text-gray-600 uppercase mb-1">SHD</div>
                             <div className="text-2xl font-black text-amber-400">{result.metrics.shd}</div>
                           </div>
-                          <div className="px-6 py-4 glass-morphism rounded-2xl border border-purple-500/20 text-center min-w-[120px]">
+                          <div className={`px-6 py-4 glass-morphism rounded-2xl border text-center min-w-[120px] ${result.slr === 0 ? 'border-emerald-500/20' : 'border-red-500/30'}`}>
                             <div className="text-[10px] font-black text-gray-600 uppercase mb-1">SLR</div>
-                            <div className="text-2xl font-black text-purple-400">{(result.slr * 100).toFixed(1)}%</div>
+                            <div className={`text-2xl font-black ${result.slr === 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                              {result.slr === 0 ? 'None' : 'Detected'}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -692,9 +694,7 @@ function App() {
                         <div>
                           <span className="text-[10px] font-black uppercase tracking-[0.2em] text-purple-400 block mb-1">Sensitivity Leakage Rate (SLR) — Novel Metric</span>
                           <p className="text-[11px] text-gray-500 leading-relaxed">
-                            Fraction of the model's response that falls outside structured edge notation.
-                            SLR = 0 means the model output only edges (no leakage); SLR = 1 means the response contained no edge notation at all.
-                            Constrained output formats suppress leakage — prompt scope, not strategy type, drives exposure.
+                            Binary metric (0 = clean, 1 = leaked) based on three detection types: <strong className="text-purple-300/70">Type 1</strong> direct value reproduction (exact dataset values in response), <strong className="text-purple-300/70">Type 2</strong> sensitive keyword inference (terms like "driver", "route", "location", "identity"), and <strong className="text-purple-300/70">Type 3</strong> value referencing within ±1.0 tolerance. Any leakage detection sets SLR to 1.
                           </p>
                         </div>
                       </div>
@@ -739,7 +739,7 @@ function App() {
                     {[
                       { label: 'Best F1', value: `${(leaderboard[0].metrics.f1 * 100).toFixed(1)}%`, sub: `${leaderboard[0].model} · ${leaderboard[0].strategy}`, color: 'text-emerald-400' },
                       { label: 'Lowest SHD', value: String([...leaderboard].sort((a, b) => a.metrics.shd - b.metrics.shd)[0]?.metrics.shd ?? '-'), sub: [...leaderboard].sort((a, b) => a.metrics.shd - b.metrics.shd)[0] ? `${[...leaderboard].sort((a, b) => a.metrics.shd - b.metrics.shd)[0].model} · ${[...leaderboard].sort((a, b) => a.metrics.shd - b.metrics.shd)[0].strategy}` : '', color: 'text-amber-400' },
-                      { label: 'Lowest SLR', value: `${(([...leaderboard].sort((a, b) => a.slr - b.slr)[0]?.slr ?? 0) * 100).toFixed(0)}%`, sub: [...leaderboard].sort((a, b) => a.slr - b.slr)[0] ? `${[...leaderboard].sort((a, b) => a.slr - b.slr)[0].model} · ${[...leaderboard].sort((a, b) => a.slr - b.slr)[0].strategy}` : '', color: 'text-purple-400' },
+                      { label: 'Clean Runs (SLR=0)', value: `${leaderboard.filter(e => e.slr === 0).length}/${leaderboard.length}`, sub: 'No leakage detected', color: 'text-purple-400' },
                     ].map(stat => (
                       <div key={stat.label} className="glass-morphism p-8 rounded-[2rem] border border-white/5 text-center space-y-3">
                         <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">{stat.label}</div>
@@ -787,7 +787,11 @@ function App() {
                               <td className="px-5 py-4 font-mono text-gray-500">{(entry.metrics.precision * 100).toFixed(0)}%</td>
                               <td className="px-5 py-4 font-mono text-gray-500">{(entry.metrics.recall * 100).toFixed(0)}%</td>
                               <td className="px-5 py-4 font-mono text-amber-500/70">{entry.metrics.shd}</td>
-                              <td className="px-5 py-4 font-mono text-purple-400/70">{(entry.slr * 100).toFixed(0)}%</td>
+                              <td className="px-5 py-4">
+                                <span className={`font-black text-[10px] uppercase tracking-wider ${entry.slr === 0 ? 'text-emerald-400/70' : 'text-red-400/80'}`}>
+                                  {entry.slr === 0 ? 'None' : 'Detected'}
+                                </span>
+                              </td>
                               <td className="px-5 py-4 font-mono text-gray-600">{entry.edge_count}</td>
                             </tr>
                           );
