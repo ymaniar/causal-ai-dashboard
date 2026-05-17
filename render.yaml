@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: causal-ai-dashboard
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt && cd frontend && npm ci && npm run build
+    startCommand: python backend/main.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
