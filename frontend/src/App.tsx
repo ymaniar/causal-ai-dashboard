@@ -739,7 +739,7 @@ function App() {
                     {[
                       { label: 'Best F1', value: `${(leaderboard[0].metrics.f1 * 100).toFixed(1)}%`, sub: `${leaderboard[0].model} · ${leaderboard[0].strategy}`, color: 'text-emerald-400' },
                       { label: 'Lowest SHD', value: String([...leaderboard].sort((a, b) => a.metrics.shd - b.metrics.shd)[0]?.metrics.shd ?? '-'), sub: [...leaderboard].sort((a, b) => a.metrics.shd - b.metrics.shd)[0] ? `${[...leaderboard].sort((a, b) => a.metrics.shd - b.metrics.shd)[0].model} · ${[...leaderboard].sort((a, b) => a.metrics.shd - b.metrics.shd)[0].strategy}` : '', color: 'text-amber-400' },
-                      { label: 'Lowest SLR', value: `${([...leaderboard].sort((a, b) => a.slr - b.slr)[0]?.slr * 100 ?? 0).toFixed(0)}%`, sub: [...leaderboard].sort((a, b) => a.slr - b.slr)[0] ? `${[...leaderboard].sort((a, b) => a.slr - b.slr)[0].model} · ${[...leaderboard].sort((a, b) => a.slr - b.slr)[0].strategy}` : '', color: 'text-purple-400' },
+                      { label: 'Lowest SLR', value: `${(([...leaderboard].sort((a, b) => a.slr - b.slr)[0]?.slr ?? 0) * 100).toFixed(0)}%`, sub: [...leaderboard].sort((a, b) => a.slr - b.slr)[0] ? `${[...leaderboard].sort((a, b) => a.slr - b.slr)[0].model} · ${[...leaderboard].sort((a, b) => a.slr - b.slr)[0].strategy}` : '', color: 'text-purple-400' },
                     ].map(stat => (
                       <div key={stat.label} className="glass-morphism p-8 rounded-[2rem] border border-white/5 text-center space-y-3">
                         <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-600">{stat.label}</div>
